@@ -1,0 +1,143 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+# See https://github.com/pre-commit/pre-commit-hooks fore more hooks as well
+
+exclude: ^.*\.ipynb$
+
+
+# List of hooks to be used **before** each commit
+repos:
+
+# Officially hosted hooks
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0  # Use the ref you want to point at
+    hooks:
+    -   id: check-added-large-files
+        args: ['--maxkb=4800']  # Limited to 2.5MB per file
+    -   id: check-ast
+    -   id: check-illegal-windows-names
+    -   id: check-json
+    -   id: check-symlinks
+    -   id: check-toml
+    -   id: check-xml
+    -   id: check-yaml
+        args: [--unsafe]
+    -   id: debug-statements
+    -   id: destroyed-symlinks
+    -   id: detect-aws-credentials
+        args: [--allow-missing-credentials]
+    -   id: detect-private-key
+    -   id: end-of-file-fixer
+#    -   id: mixed-line-ending
+#        args: [--fix=no]
+#    -   id: no-commit-to-branch
+#        args: [--branch, staging, --branch, main, --branch, master, --branch, main_snap]
+    -   id: pretty-format-json
+    -   id: requirements-txt-fixer
+    -   id: trailing-whitespace
+        args: [--markdown-linebreak-ext=md]
+
+# Hook to detect and fix common misspellings in text files
+-   repo: https://github.com/codespell-project/codespell
+    rev: v2.4.1
+    hooks:
+    -   id: codespell
+        args: [ -w, -L, "THIRDPARTY", "--skip=*.lock" ]
+
+# Gitleaks: tool for detecting secrets like passwords, API keys, and tokens in git repos
+-   repo: https://github.com/gitleaks/gitleaks
+    rev: v8.28.0
+    hooks:
+      - id: gitleaks
+
+# Linter + Code formatter written in Rust (ultra-high performance)
+-   repo: https://github.com/astral-sh/ruff-pre-commit
+    # Ruff version.
+    rev: v0.14.2
+    hooks:
+    # Run the linter.
+    -   id: ruff
+        name: ruff (linter)
+        types_or: [ python, pyi ]
+#        args: [ --fix , -v]
+    -   id: ruff
+        name: ruff (imports sorting)
+        types_or: [ python, pyi ]
+        args: [ check , --select, I, --fix ]
+    # Run the formatter.
+    -   id: ruff-format
+        name: ruff (formatter)
+#        args: [ -v ]
+        types_or: [ python, pyi ]
+
+# Running the isort hook (sort imports alphabetically, and automatically separated into sections and by type)
+#-   repo: https://github.com/pycqa/isort
+#    rev: 5.13.2
+#    hooks:
+#    -   id: isort
+#        name: isort (python)
+#        args: [ --lines-after-imports=-1, --lines-between-types=-1, -m=3, -v ]
+#    -   id: isort
+#        name: isort (cython)
+#        types: [cython]
+#        args: [ --lines-after-imports=-1, --lines-between-types=-1, -m=3, -v ]
+#    -   id: isort
+#        name: isort (pyi)
+#        types: [pyi]
+#        args: [ --lines-after-imports=-1, --lines-between-types=-1, -m=3, -v ]
+
+
+# Running static type checker (pyright) ==> WARNING: This is a typescript lib ==> node and npm must be installed
+#-   repo: https://github.com/RobertCraigie/pyright-python
+#    rev: v1.1.386
+#    hooks:
+#    -   id: pyright
+
+# Running typos (source code spell checker)
+#-   repo: https://github.com/crate-ci/typos
+#    rev: v1.26.8
+#    hooks:
+#    -   id: typos
+
+# Running the mypy (Optional static typing for Python)
+-   repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.18.2  # Use the sha / tag you want to point at
+    hooks:
+    -   id: mypy
+        args: [--ignore-missing-imports, --follow-imports=skip, --disable-error-code=annotation-unchecked]
+        additional_dependencies: ['types-requests', 'types-python-dateutil', 'types-Deprecated']
+
+#    # Third-party hooks
+#-   repo: https://github.com/psf/black
+#    rev: 22.10.0
+#    hooks:
+#    -   id: black
+#        args: [--safe]
+-   repo: https://github.com/python-jsonschema/check-jsonschema
+    rev: 0.34.1
+    hooks:
+      - id: check-dependabot
+      - id: check-github-workflows
+
+# Zizmor: Static analysis for GitHub Actions
+-   repo: https://github.com/zizmorcore/zizmor-pre-commit
+    # Zizmor version.
+    rev: v1.16.1
+    hooks:
+      # Run the linter.
+      - id: zizmor
+
+-   repo: https://github.com/econchick/interrogate
+    rev: 1.7.0  # or master if you're bold
+    hooks:
+      - id: interrogate # Preliminary check here
+        args: [ --verbose ]
+      - id: interrogate
+        name: interrogate (coverage check on staged files only)
+        args:
+          - --fail-under=90
+          - --exclude=app|build|data|dist|out|scripts
+          - --verbose
+        pass_filenames: true
+        always_run: false
+        types: [python]
