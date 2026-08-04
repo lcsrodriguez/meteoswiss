@@ -64,3 +64,21 @@ def get_parameters_freq(parameters: pl.DataFrame) -> Dict[str, str]:
             zip(freqs["parameter_shortname"], freqs["parameter_granularity"])
         )
     }
+
+
+def get_parameters_by_freq(parameters: pl.DataFrame) -> Dict[str, List[str]]:
+    """
+    Function to return list of parameter names grouped by frequency (H or D)
+    :param parameters: Dataframe of parameters
+    :type parameters:  pl.DataFrame
+    :return: Dictionary with frequency for each parameter
+    :rtype: Dict[str, List[str]]
+    """
+    freqs = get_parameters_freq(parameters)
+
+    r: Dict[str, List[str]] = {}
+    for v, k in freqs.items():
+        if k not in r:
+            r[k] = []
+        r[k].append(v)
+    return r
