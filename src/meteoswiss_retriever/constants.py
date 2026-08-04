@@ -1,6 +1,6 @@
 """List of constants"""
 
-from typing import List
+from typing import Dict, List
 
 from pytz import timezone  # type: ignore[import-untyped]
 
@@ -12,3 +12,10 @@ REMOVED_LANGUAGES: List[str] = ["de", "fr", "it"]
 
 # docs: https://pypi.org/project/pytz/
 CURRENT_TZ = timezone("Europe/Zurich")
+
+# docs: https://opendatadocs.meteoswiss.ch/e-forecast-data/e4-local-forecast-data?metadata=points
+FORECAST_POINTS_MAPPING: Dict[int, str] = {
+    1: "WEATHER_STATION",
+    2: "POSTAL_CODE",
+    3: "POINT_OF_INTEREST",
+}
