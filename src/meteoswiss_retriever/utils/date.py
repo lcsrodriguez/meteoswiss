@@ -1,6 +1,6 @@
 """Utils funcs for date"""
 
-from datetime import datetime
+from datetime import date, datetime
 
 from pytz import UTC  # type: ignore[import-untyped]
 
@@ -21,6 +21,24 @@ def get_datetime_from_str(str_datetime: str | None = None) -> datetime:
         datetime.strptime(str_datetime, "%Y%m%d%H%M")
         .replace(tzinfo=UTC)
         .astimezone(tz=CURRENT_TZ)
+    )
+
+
+def get_date_from_str(str_date: str | None = None) -> date:
+    """
+    Function to convert a string date to real `date` object
+    :param str_date: String format of date
+    :type str_date: str | None
+    :return: Date object
+    :rtype: date
+    """
+    if str_date is None:
+        return datetime.today().replace(tzinfo=UTC).astimezone(tz=CURRENT_TZ)
+    return (
+        datetime.strptime(str_date, "%Y%m%d")
+        .replace(tzinfo=UTC)
+        .astimezone(tz=CURRENT_TZ)
+        .date()
     )
 
 
