@@ -1,16 +1,23 @@
 """Logic to handle local forecast data download/management"""
 
 from datetime import date, datetime
+from io import StringIO
 from typing import Any, Dict, List
 
 import httpx
+import polars as pl
 
-from meteoswiss_retriever.constants import BASE_URL, LOCAL_FORECAST_COLLECTION_ID
+from meteoswiss_retriever.constants import (
+    BASE_URL,
+    ENCODING_FORMAT,
+    LOCAL_FORECAST_COLLECTION_ID,
+)
 from meteoswiss_retriever.utils.date import (
     get_date_from_str,
     get_datetime_from_iso_str,
     get_datetime_from_str,
 )
+from meteoswiss_retriever.utils.export import save_df
 
 # These files are updated every hour
 # Items: https://data.geo.admin.ch/api/stac/v1/collections/ch.meteoschweiz.ogd-local-forecasting/items
@@ -60,7 +67,7 @@ def get_available_forecast_days(
 def query_local_forecast_asset_links(  # query_local_forecast_item
     day: date | None = None,
     raise_errors: bool = True,
-    # forecast_inception_hour: str | int | None = None,  # To force instead of latest_update_dt
+    # force_forecast_hour: str | int | None = None,  # To force instead of latest_update_dt
     force_params_list: List[str] | None = None,  # To pre-select specific parameters
 ) -> Dict[str, Dict[str, Any]]:
     """
@@ -149,3 +156,42 @@ def _get_forecast_available_hours(
         get_datetime_from_str(h)
         for h in sorted({k.split(".")[2] for k in assets.keys()})
     ]
+
+
+def collect_assets_data(
+    links: Dict[str, Dict[str, str]], raise_errors: bool = True, save: bool = True
+) -> Dict[str, pl.DataFrame]:
+    """
+    Function to collect data for all assets (HTTP requests)
+    :param links: Dictionary with available forecast links filtered by asset
+    :type links: Dict[str, Dict[str, str]]
+    :param raise_errors: Boolean to raise if HTTP error occurs
+    :type raise_errors: bool
+    :param save: On-disk save
+    :type save: bool
+    :return: Dict of forecast dataframes
+    :rtype: Dict[str, pl.DataFrame]
+    """
+
+    data: Dict[str, pl.DataFrame] = {}
+
+    with httpx.Client() as client:
+        for asset_name, asset_details in links.items():
+            print(f"Starting asset {asset_name}")
+            # Performing HTTP request
+            req = client.get(asset_details["link"])
+            if raise_errors:
+                req.raise_for_status()
+
+            # Reading CSV payload
+            d_ = pl.read_csv(
+                StringIO(req.content.decode(ENCODING_FORMAT)), separator=";"
+            )
+
+            if save:
+                # Saving CSV on-disk
+                save_df(df=d_, path=f"data/forecasts/dl/{asset_name}.csv")
+            data[asset_name] = d_
+            print(f"Finishing asset {asset_name}")
+
+    return data

@@ -19,3 +19,9 @@ FORECAST_POINTS_MAPPING: Dict[int, str] = {
     2: "POSTAL_CODE",
     3: "POINT_OF_INTEREST",
 }
+
+
+# docs: https://opendatadocs.meteoswiss.ch/e-forecast-data/e4-local-forecast-data?metadata=points#data-format
+# CSV encoding := **Latin1** (ISO-8859-1)
+
+ENCODING_FORMAT: str = "latin-1"
