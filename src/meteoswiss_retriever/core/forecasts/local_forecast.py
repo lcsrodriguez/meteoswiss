@@ -61,7 +61,7 @@ def query_local_forecast_asset_links(  # query_local_forecast_item
     day: date | None = None,
     raise_errors: bool = True,
     # forecast_inception_hour: str | int | None = None,  # To force instead of latest_update_dt
-    # params_list: List[str] | None = None, # To pre-select specific parameters
+    force_params_list: List[str] | None = None,  # To pre-select specific parameters
 ) -> Dict[str, Dict[str, Any]]:
     """
     Function to query and retrieve the list of URLs to be later queried
@@ -69,6 +69,8 @@ def query_local_forecast_asset_links(  # query_local_forecast_item
     :type day: str | None
     :param raise_errors: Boolean to raise if error occurs
     :type raise_errors: bool
+    :param force_params_list: List of parameters to enforce URL collection (defaults to all parameters)
+    :type force_params_list: List[str] | None
     :return: Dict with valid forecast data link for each parameter
     :rtype: Dict[str, Dict[str, Any]]
     """
@@ -99,13 +101,19 @@ def query_local_forecast_asset_links(  # query_local_forecast_item
     # Collecting links
     links: Dict = {}
     for asset_name, asset_details in assets.items():
+        # Getting parameter/field/asset name
+        param_name: str = str(asset_name.split(".")[3])
+
+        # Enforcing specific parameters if needed
+        if force_params_list is not None:
+            if param_name not in force_params_list:
+                continue
+
         # Getting current asset hour
         asset_dt_hour: datetime = get_datetime_from_str(asset_name.split(".")[2])
 
         # Only selecting latest forecast data ('fresh data')
         if asset_dt_hour == latest_update_dt:
-            param_name: str = str(asset_name.split(".")[3])
-
             links[param_name] = {
                 "link": asset_details["href"],
             }
