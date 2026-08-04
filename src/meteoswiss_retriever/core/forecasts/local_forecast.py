@@ -1,6 +1,6 @@
 """Logic to handle local forecast data download/management"""
 
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from io import StringIO
 from typing import Any, Dict, List
 
@@ -9,6 +9,7 @@ import polars as pl
 
 from meteoswiss_retriever.constants import (
     BASE_URL,
+    CURRENT_TZ,
     ENCODING_FORMAT,
     LOCAL_FORECAST_COLLECTION_ID,
 )
@@ -241,7 +242,11 @@ def process_asset_df(data: pl.DataFrame) -> pl.DataFrame:
 
 
 def get_forecast_data(
-    forecasts_data: Dict[str, pl.DataFrame], loc: Location, parameters: pl.DataFrame
+    forecasts_data: Dict[str, pl.DataFrame],
+    loc: Location,
+    parameters: pl.DataFrame,
+    now_cutoff: bool = True,
+    cutoff_horizon: int = 3,
 ) -> Dict[str, pl.DataFrame]:
     """
     Function returning 2 dataframes with all assets for a given location
@@ -252,6 +257,10 @@ def get_forecast_data(
     :type loc: Location
     :param parameters: Parameters dataframe
     :type parameters: pl.DataFrame
+    :param now_cutoff: Remove past data (before now time - cut-off horizon)
+    :type now_cutoff: bool
+    :param cutoff_horizon: Cutoff horizon (hours to be included **before** current time in forecasts)
+    :type cutoff_horizon: int
     :return: Dict of forecast dataframes
     :rtype: Dict[str, pl.DataFrame]
     """
@@ -276,4 +285,11 @@ def get_forecast_data(
 
     for freq in ["H", "D"]:
         res[freq] = pl.concat(dfs[freq], how="horizontal")
+
+    if now_cutoff:
+        res["H"] = res["H"].filter(
+            pl.col("Date")
+            >= datetime.now(tz=CURRENT_TZ) - timedelta(hours=cutoff_horizon)
+        )
+
     return res
