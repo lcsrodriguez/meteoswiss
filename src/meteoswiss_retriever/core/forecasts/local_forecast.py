@@ -12,6 +12,11 @@ from meteoswiss_retriever.constants import (
     ENCODING_FORMAT,
     LOCAL_FORECAST_COLLECTION_ID,
 )
+from meteoswiss_retriever.core.forecasts.metadata.parameters import get_parameters_freq
+from meteoswiss_retriever.core.forecasts.metadata.points import (
+    Location,
+    get_unique_point,
+)
 from meteoswiss_retriever.utils.date import (
     get_date_from_str,
     get_datetime_from_iso_str,
@@ -212,3 +217,63 @@ def read_local_data(params: List[str]) -> Dict[str, pl.DataFrame]:
         data[param] = pl.read_csv(f"data/forecasts/dl/{param}.csv", separator=";")
 
     return data
+
+
+def process_asset_df(data: pl.DataFrame) -> pl.DataFrame:
+    """
+    Function to process an asset dataframe
+    :param data: Asset dataframe
+    :type data: pl.DataFrame
+    :return: Clean dataframe
+    :rtype: pl.DataFrame
+    """
+    # data["Date"] = data["Date"].cast(pl.Datetime) # not working
+
+    # Casting datetime + converting to correct tz
+    data = data.with_columns(
+        pl.col("Date")
+        .cast(pl.Utf8)
+        .str.strptime(pl.Datetime, format="%Y%m%d%H%M")
+        .dt.replace_time_zone("UTC")
+        .dt.convert_time_zone("Europe/Zurich")
+    )
+    return data
+
+
+def get_forecast_data(
+    forecasts_data: Dict[str, pl.DataFrame], loc: Location, parameters: pl.DataFrame
+) -> Dict[str, pl.DataFrame]:
+    """
+    Function returning 2 dataframes with all assets for a given location
+    (one for each frequency: H or D)
+    :param forecasts_data: Forecasts dataframe (all assets)
+    :type forecasts_data: Dict[str, pl.DataFrame]
+    :param loc: Location of interest
+    :type loc: Location
+    :param parameters: Parameters dataframe
+    :type parameters: pl.DataFrame
+    :return: Dict of forecast dataframes
+    :rtype: Dict[str, pl.DataFrame]
+    """
+
+    dfs: Dict[str, List[pl.DataFrame]] = {"H": [], "D": []}
+    res: Dict[str, pl.DataFrame] = {"H": pl.DataFrame(), "D": pl.DataFrame()}
+
+    param_freqs = get_parameters_freq(parameters)
+
+    data: Dict[str, pl.DataFrame] = {}
+    for param, df in forecasts_data.items():
+        data[param] = get_unique_point(data=df, **loc._asdict())
+
+        data[param] = process_asset_df(data[param])
+
+        if len(dfs[param_freqs[param]]) == 0:
+            dfs[param_freqs[param]].append(
+                data[param].select(pl.col("Date"), pl.col(param))
+            )
+        else:
+            dfs[param_freqs[param]].append(data[param].select(pl.col(param)))
+
+    for freq in ["H", "D"]:
+        res[freq] = pl.concat(dfs[freq], how="horizontal")
+    return res
