@@ -2,6 +2,8 @@
 
 import polars as pl
 
+from meteoswiss_retriever.constants import CSV_SEPARATOR
+
 
 def save_df(df: pl.DataFrame, path: str) -> bool:
     """
@@ -14,7 +16,7 @@ def save_df(df: pl.DataFrame, path: str) -> bool:
     :rtype: bool
     """
     try:
-        df.write_csv(path)
+        df.write_csv(path, separator=CSV_SEPARATOR)
         return True
     except Exception as exc_:
         print(exc_)

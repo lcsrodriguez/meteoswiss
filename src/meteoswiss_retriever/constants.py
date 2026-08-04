@@ -25,3 +25,6 @@ FORECAST_POINTS_MAPPING: Dict[int, str] = {
 # CSV encoding := **Latin1** (ISO-8859-1)
 
 ENCODING_FORMAT: str = "latin-1"
+
+
+CSV_SEPARATOR: str = ";"
