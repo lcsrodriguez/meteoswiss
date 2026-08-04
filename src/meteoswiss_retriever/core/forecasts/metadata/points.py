@@ -7,6 +7,7 @@ import polars as pl
 
 from meteoswiss_retriever.constants import (
     BASE_URL,
+    ENCODING_FORMAT,
     LOCAL_FORECAST_COLLECTION_ID,
     REMOVED_LANGUAGES,
 )
@@ -27,7 +28,7 @@ def query_geo_points(raise_errors: bool = True) -> pl.DataFrame:
     if raise_errors:
         r.raise_for_status()
 
-    return pl.read_csv(StringIO(r.text), separator=";")
+    return pl.read_csv(StringIO(r.content.decode(ENCODING_FORMAT)), separator=";")
 
 
 def clean_points(points: pl.DataFrame) -> pl.DataFrame:
