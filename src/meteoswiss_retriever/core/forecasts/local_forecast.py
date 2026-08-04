@@ -195,3 +195,20 @@ def collect_assets_data(
             print(f"Finishing asset {asset_name}")
 
     return data
+
+
+def read_local_data(params: List[str]) -> Dict[str, pl.DataFrame]:
+    """
+    Function to read local data (already-collected asset data)
+    :param params: List of parameter names
+    :type params: List[str]
+    :return: Dict of data by parameter name
+    :rtype: Dict[str, pl.DataFrame]
+    """
+    data: Dict[str, pl.DataFrame] = {param: pl.DataFrame() for param in params}
+
+    for param in params:
+        print(f"Reading local data for param: {param}")
+        data[param] = pl.read_csv(f"data/forecasts/dl/{param}.csv", separator=";")
+
+    return data
