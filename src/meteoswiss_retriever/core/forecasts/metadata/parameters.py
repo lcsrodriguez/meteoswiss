@@ -1,6 +1,7 @@
 """Sub-module to query and return MeteoSwiss parameters"""
 
 from io import StringIO
+from typing import Dict, List
 
 import httpx
 import polars as pl
@@ -44,3 +45,22 @@ def clean_parameters(parameters: pl.DataFrame) -> pl.DataFrame:
         [f"parameter_description_{lang}" for lang in REMOVED_LANGUAGES]
         + [f"parameter_group_{lang}" for lang in REMOVED_LANGUAGES]
     )
+
+
+def get_parameters_freq(parameters: pl.DataFrame) -> Dict[str, str]:
+    """
+    Function returning frequency for each parameter
+    :param parameters: Dataframe of parameters
+    :type parameters: pl.DataFrame
+    :return: Dictionary with frequency for each parameter
+    :rtype: Dict[str, str]
+    """
+    freqs: Dict[str, List[str]] = parameters.select(
+        pl.col("parameter_shortname"), pl.col("parameter_granularity")
+    ).to_dict(as_series=False)
+    return {
+        k: v
+        for k, v in list(
+            zip(freqs["parameter_shortname"], freqs["parameter_granularity"])
+        )
+    }
