@@ -22,6 +22,7 @@ except PackageNotFoundError:
 BASE_URL: str = "https://data.geo.admin.ch"
 
 LOCAL_FORECAST_COLLECTION_ID: str = "ch.meteoschweiz.ogd-local-forecasting"
+GROUND_MEASUREMENTS_COLLECTION_ID: str = "ch.meteoschweiz.ogd-smn"
 
 REMOVED_LANGUAGES: List[str] = ["de", "fr", "it"]
 
