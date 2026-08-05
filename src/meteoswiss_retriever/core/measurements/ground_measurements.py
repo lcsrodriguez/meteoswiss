@@ -45,7 +45,7 @@ def query_available_items(raise_errors: bool = True) -> Any:
 # := query_measurements_asset_links // get_available_assets_per_station
 def query_measurements_asset_links(
     station_abbr: str | None = None, raise_errors: bool = True
-) -> Dict:
+) -> Dict[str, Dict[str, Any]]:
     """
     Function to query and return list of assets for a given station abbreviation
     :param station_abbr: Station abbreviation
@@ -53,7 +53,7 @@ def query_measurements_asset_links(
     :param raise_errors: Boolean to raise if HTTP error occurs
     :type raise_errors: bool
     :return: List of assets
-    :rtype: Dict
+    :rtype: Dict[str, Dict[str, Any]]
     """
 
     # link: https://data.geo.admin.ch/api/stac/v0.9/collections/ch.meteoschweiz.ogd-smn/items/puy
@@ -70,4 +70,14 @@ def query_measurements_asset_links(
 
     data = r.json()
     assets = data["assets"]
-    return assets
+
+    # Collecting links
+    links: Dict = {}
+    for asset_name, asset_details in assets.items():
+        # Getting parameter/field/asset name
+        param_name: str = str(asset_name.split(".")[0])
+
+        links[param_name] = {
+            "link": asset_details["href"],
+        }
+    return links  # return assets
