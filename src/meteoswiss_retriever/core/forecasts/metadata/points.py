@@ -56,7 +56,9 @@ def clean_points(points: pl.DataFrame) -> pl.DataFrame:
     :return: Cleaned geo points
     :rtype: pl.DataFrame
     """
-    return points.drop([f"point_type_{lang}" for lang in REMOVED_LANGUAGES])
+    return points.drop([f"point_type_{lang}" for lang in REMOVED_LANGUAGES]).rename(
+        {"point_coordinates_wgs84_lat": "lat", "point_coordinates_wgs84_lon": "lon"}
+    )
 
 
 def get_unique_point(

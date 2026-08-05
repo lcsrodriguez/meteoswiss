@@ -28,3 +28,7 @@ When selecting a postal code, users can have access to local forecasts at this p
 However, ground-measurements are only available on specific stations.
 To get both *realized* measurements + local forecasts for a given postal code,
 we can use **proxy measurements** by picking the ground measurements at the nearest station from our postal code coordinates.
+
+## License
+
+Data source: **[MeteoSwiss](https://opendatadocs.meteoswiss.ch/)**.
