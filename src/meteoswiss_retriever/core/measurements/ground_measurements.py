@@ -1,6 +1,6 @@
 """Logic to handle local forecast data download/management"""
 
-from typing import Any
+from typing import Any, Dict
 
 import httpx
 
@@ -37,8 +37,37 @@ def query_available_items(raise_errors: bool = True) -> Any:
         r.raise_for_status()
     data = r.json()
 
-    print()
-
     latest_update = get_datetime_from_iso_str(data["timeStamp"])
     logger.info(f"Latest update of the collection: {latest_update}")
     return data["features"]
+
+
+# := query_measurements_asset_links // get_available_assets_per_station
+def query_measurements_asset_links(
+    station_abbr: str | None = None, raise_errors: bool = True
+) -> Dict:
+    """
+    Function to query and return list of assets for a given station abbreviation
+    :param station_abbr: Station abbreviation
+    :type station_abbr: str | None
+    :param raise_errors: Boolean to raise if HTTP error occurs
+    :type raise_errors: bool
+    :return: List of assets
+    :rtype: Dict
+    """
+
+    # link: https://data.geo.admin.ch/api/stac/v0.9/collections/ch.meteoschweiz.ogd-smn/items/puy
+
+    if station_abbr is None:
+        logger.error("Station abbreviation is not provided")
+        return {}
+
+    r = httpx.get(
+        url=f"{BASE_URL}/api/stac/v1/collections/{GROUND_MEASUREMENTS_COLLECTION_ID}/items/{station_abbr.lower()}",
+    )
+    if raise_errors:
+        r.raise_for_status()
+
+    data = r.json()
+    assets = data["assets"]
+    return assets
