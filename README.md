@@ -20,3 +20,11 @@ Datasets are available via open-source APIs provided by MeteoSwiss.
 
 > [!WARNING]
 > Short-term forecast data *(nowcasting)* are available to download **on request**. No API endpoint exposed.
+
+
+### Measurements
+
+When selecting a postal code, users can have access to local forecasts at this postal code.
+However, ground-measurements are only available on specific stations.
+To get both *realized* measurements + local forecasts for a given postal code,
+we can use **proxy measurements** by picking the ground measurements at the nearest station from our postal code coordinates.

@@ -1,9 +1,15 @@
 """Sample script to retrieve + save metadata on forecasts"""
+# ruff: noqa: E402
+
+from meteoswiss_retriever.utils.logs import get_logger, setup_logger
+
+setup_logger()
+
 
 from meteoswiss_retriever.core.forecasts.local_forecast import (
     get_forecast_data,
     query_local_forecast_asset_links,
-    read_local_data,
+    read_local_data,  # , collect_assets_data
 )
 from meteoswiss_retriever.core.forecasts.metadata.parameters import (
     clean_parameters,
@@ -16,6 +22,8 @@ from meteoswiss_retriever.core.forecasts.metadata.points import (
     query_geo_points,
 )
 from meteoswiss_retriever.utils.export import save_df
+
+logger = get_logger(__name__)
 
 points = clean_points(query_geo_points())
 params = clean_parameters(query_parameters())

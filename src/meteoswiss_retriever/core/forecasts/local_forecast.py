@@ -24,6 +24,9 @@ from meteoswiss_retriever.utils.date import (
     get_datetime_from_str,
 )
 from meteoswiss_retriever.utils.export import save_df
+from meteoswiss_retriever.utils.logs import get_logger
+
+logger = get_logger(__name__)
 
 # These files are updated every hour
 # Items: https://data.geo.admin.ch/api/stac/v1/collections/ch.meteoschweiz.ogd-local-forecasting/items
@@ -48,7 +51,7 @@ def query_available_items(raise_errors: bool = True) -> Any:
     data = r.json()
 
     latest_update = get_datetime_from_iso_str(data["timeStamp"])
-    print(f"Latest update of the collection: {latest_update}")
+    logger.info(f"Latest update of the collection: {latest_update}")
     return data["features"]
 
 
@@ -105,11 +108,11 @@ def query_local_forecast_asset_links(  # query_local_forecast_item
 
     # Retrieving last update datetime
     latest_update_dt = _get_latest_forecast_available_hour(assets)
-    print(latest_update_dt)
+    logger.info(latest_update_dt)
 
     # Checking
-    print("Available forecast hours")
-    print(_get_forecast_available_hours(assets))
+    logger.info("Available forecast hours")
+    logger.info(_get_forecast_available_hours(assets))
 
     # Collecting links
     links: Dict = {}
@@ -183,7 +186,7 @@ def collect_assets_data(
 
     with httpx.Client() as client:
         for asset_name, asset_details in links.items():
-            print(f"Starting asset {asset_name}")
+            logger.info(f"Starting asset {asset_name}")
             # Performing HTTP request
             req = client.get(asset_details["link"])
             if raise_errors:
@@ -198,7 +201,7 @@ def collect_assets_data(
                 # Saving CSV on-disk
                 save_df(df=d_, path=f"data/forecasts/dl/{asset_name}.csv")
             data[asset_name] = d_
-            print(f"Finishing asset {asset_name}")
+            logger.info(f"Finishing asset {asset_name}")
 
     return data
 
@@ -214,7 +217,7 @@ def read_local_data(params: List[str]) -> Dict[str, pl.DataFrame]:
     data: Dict[str, pl.DataFrame] = {param: pl.DataFrame() for param in params}
 
     for param in params:
-        print(f"Reading local data for param: {param}")
+        logger.info(f"Reading local data for param: {param}")
         data[param] = pl.read_csv(f"data/forecasts/dl/{param}.csv", separator=";")
 
     return data

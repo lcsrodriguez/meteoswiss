@@ -5,6 +5,7 @@ version = "0.1.0"
 requires-python = ">=3.13"
 dependencies = [
     "httpx>=0.28.1",
+    "platformdirs>=4.11.0",
     "polars>=1.43.2",
     "pytz>=2026.3.post1",
 ]
@@ -18,3 +19,7 @@ dev = [
 [[tool.mypy.overrides]]
 module = ["meteoswiss_retriever.*"]
 ignore_missing_imports = true
+
+[tool.uv]
+package = true
+exclude-newer = "2 days"  # https://docs.astral.sh/uv/reference/settings/#exclude-newer

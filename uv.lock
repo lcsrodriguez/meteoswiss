@@ -2,6 +2,10 @@ version = 1
 revision = 3
 requires-python = ">=3.13"
 
+[options]
+exclude-newer = "0001-01-01T00:00:00Z" # This has no effect and is included for backwards compatibility when using relative exclude-newer values.
+exclude-newer-span = "P2D"
+
 [[package]]
 name = "anyio"
 version = "4.14.2"
@@ -108,9 +112,10 @@ wheels = [
 [[package]]
 name = "meteoswiss-retriever"
 version = "0.1.0"
-source = { virtual = "." }
+source = { editable = "." }
 dependencies = [
     { name = "httpx" },
+    { name = "platformdirs" },
     { name = "polars" },
     { name = "pytz" },
 ]
@@ -124,6 +129,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "httpx", specifier = ">=0.28.1" },
+    { name = "platformdirs", specifier = ">=4.11.0" },
     { name = "polars", specifier = ">=1.43.2" },
     { name = "pytz", specifier = ">=2026.3.post1" },
 ]

@@ -1,8 +1,23 @@
 """List of constants"""
 
-from typing import Dict, List
+from importlib.metadata import PackageNotFoundError, version
+from pathlib import Path
+from typing import Dict, List, Tuple
 
+from platformdirs import user_log_path
 from pytz import timezone  # type: ignore[import-untyped]
+
+APP_NAME: str = "meteoswiss_retriever"
+
+# Version dynamically updated via Makefile targets
+APP_VERSION: str = version(APP_NAME)
+APP_VERSION_TUPLE: Tuple[int, ...] = tuple(map(int, APP_VERSION.split(".")))
+
+try:
+    __version__: str = version(APP_NAME)
+except PackageNotFoundError:
+    __version__ = "unknown"  # "0.0.0"
+
 
 BASE_URL: str = "https://data.geo.admin.ch"
 
@@ -28,3 +43,5 @@ ENCODING_FORMAT: str = "latin-1"
 
 
 CSV_SEPARATOR: str = ";"
+
+LOG_DIR: Path = user_log_path(appname=APP_NAME, version=APP_VERSION)
