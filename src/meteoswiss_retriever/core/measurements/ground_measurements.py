@@ -118,6 +118,7 @@ def collect_assets_data(
                 separator=";",
                 ignore_errors=True,
             )
+            d_ = process_asset_df(d_)
 
             if save:
                 # Saving CSV on-disk
@@ -125,4 +126,25 @@ def collect_assets_data(
             data[asset_name] = d_
             logger.info(f"Finishing asset {asset_name}")
 
+    return data
+
+
+def process_asset_df(data: pl.DataFrame) -> pl.DataFrame:
+    """
+    Function to process an asset dataframe
+    :param data: Asset dataframe
+    :type data: pl.DataFrame
+    :return: Clean dataframe
+    :rtype: pl.DataFrame
+    """
+    # data["Date"] = data["Date"].cast(pl.Datetime) # not working
+
+    # Casting datetime + converting to correct tz
+    data = data.with_columns(
+        pl.col("reference_timestamp")
+        .cast(pl.Utf8)
+        .str.strptime(pl.Datetime, format="%d.%m.%Y %H:%M")
+        .dt.replace_time_zone("UTC")
+        .dt.convert_time_zone("Europe/Zurich")
+    )
     return data
