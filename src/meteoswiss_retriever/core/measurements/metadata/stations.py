@@ -51,4 +51,6 @@ def clean_stations(points: pl.DataFrame) -> pl.DataFrame:
         [f"station_type_{lang}" for lang in REMOVED_LANGUAGES]
         + [f"station_exposition_{lang}" for lang in REMOVED_LANGUAGES]
         + [f"station_url_{lang}" for lang in REMOVED_LANGUAGES]
+    ).rename(
+        {"station_coordinates_wgs84_lat": "lat", "station_coordinates_wgs84_lon": "lon"}
     )
