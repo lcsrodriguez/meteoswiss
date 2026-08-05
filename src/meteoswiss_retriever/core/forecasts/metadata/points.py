@@ -12,6 +12,9 @@ from meteoswiss_retriever.constants import (
     LOCAL_FORECAST_COLLECTION_ID,
     REMOVED_LANGUAGES,
 )
+from meteoswiss_retriever.utils.logs import get_logger
+
+logger = get_logger(__name__)
 
 
 class Location(NamedTuple):
@@ -33,6 +36,9 @@ def query_geo_points(raise_errors: bool = True) -> pl.DataFrame:
     :return: Polars DataFrame with geo points from MeteoSwiss
     :rtype: pl.DataFrame
     """
+
+    logger.info("Querying MeteoSwiss local forecast parameters (metadata)")
+
     r = httpx.get(
         url=f"{BASE_URL}/{LOCAL_FORECAST_COLLECTION_ID}/ogd-local-forecasting_meta_point.csv",
     )

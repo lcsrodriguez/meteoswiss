@@ -3,6 +3,9 @@
 import polars as pl
 
 from meteoswiss_retriever.constants import CSV_SEPARATOR
+from meteoswiss_retriever.utils.logs import get_logger
+
+logger = get_logger(__name__)
 
 
 def save_df(df: pl.DataFrame, path: str) -> bool:
@@ -16,8 +19,9 @@ def save_df(df: pl.DataFrame, path: str) -> bool:
     :rtype: bool
     """
     try:
+        logger.info(f"Writing to disk on file: {path}")
         df.write_csv(path, separator=CSV_SEPARATOR)
         return True
     except Exception as exc_:
-        print(exc_)
+        logger.error(exc_)
         return False

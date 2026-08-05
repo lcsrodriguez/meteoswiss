@@ -12,6 +12,9 @@ from meteoswiss_retriever.constants import (
     LOCAL_FORECAST_COLLECTION_ID,
     REMOVED_LANGUAGES,
 )
+from meteoswiss_retriever.utils.logs import get_logger
+
+logger = get_logger(__name__)
 
 
 def query_parameters(raise_errors: bool = True) -> pl.DataFrame:
@@ -24,6 +27,7 @@ def query_parameters(raise_errors: bool = True) -> pl.DataFrame:
     :rtype: pl.DataFrame
     """
 
+    logger.info("Querying MeteoSwiss local forecast parameters (metadata)")
     r = httpx.get(
         url=f"{BASE_URL}/{LOCAL_FORECAST_COLLECTION_ID}/ogd-local-forecasting_meta_parameters.csv",
     )
@@ -55,6 +59,7 @@ def get_parameters_freq(parameters: pl.DataFrame) -> Dict[str, str]:
     :return: Dictionary with frequency for each parameter
     :rtype: Dict[str, str]
     """
+    logger.info("Getting parameter frequencies")
     freqs: Dict[str, List[str]] = parameters.select(
         pl.col("parameter_shortname"), pl.col("parameter_granularity")
     ).to_dict(as_series=False)
