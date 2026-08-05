@@ -1,16 +1,20 @@
 """Logic to handle local forecast data download/management"""
 
+from io import StringIO
 from typing import Any, Dict
 
 import httpx
+import polars as pl
 
 from meteoswiss_retriever.constants import (
     BASE_URL,
+    ENCODING_FORMAT,
     GROUND_MEASUREMENTS_COLLECTION_ID,
 )
 from meteoswiss_retriever.utils.date import (
     get_datetime_from_iso_str,
 )
+from meteoswiss_retriever.utils.export import save_df
 from meteoswiss_retriever.utils.logs import get_logger
 
 logger = get_logger(__name__)
@@ -81,3 +85,44 @@ def query_measurements_asset_links(
             "link": asset_details["href"],
         }
     return links  # return assets
+
+
+def collect_assets_data(
+    links: Dict[str, Dict[str, str]], raise_errors: bool = True, save: bool = True
+) -> Dict[str, pl.DataFrame]:
+    """
+    Function to collect data for all assets (HTTP requests)
+    :param links: Dictionary with available measurements links filtered by asset
+    :type links: Dict[str, Dict[str, str]]
+    :param raise_errors: Boolean to raise if HTTP error occurs
+    :type raise_errors: bool
+    :param save: On-disk save
+    :type save: bool
+    :return: Dict of forecast dataframes
+    :rtype: Dict[str, pl.DataFrame]
+    """
+
+    data: Dict[str, pl.DataFrame] = {}
+
+    with httpx.Client() as client:
+        for asset_name, asset_details in links.items():
+            logger.info(f"Starting asset {asset_name}")
+            # Performing HTTP request
+            req = client.get(asset_details["link"])
+            if raise_errors:
+                req.raise_for_status()
+
+            # Reading CSV payload
+            d_ = pl.read_csv(
+                StringIO(req.content.decode(ENCODING_FORMAT)),
+                separator=";",
+                ignore_errors=True,
+            )
+
+            if save:
+                # Saving CSV on-disk
+                save_df(df=d_, path=f"data/measurements/dl/{asset_name}.csv")
+            data[asset_name] = d_
+            logger.info(f"Finishing asset {asset_name}")
+
+    return data
