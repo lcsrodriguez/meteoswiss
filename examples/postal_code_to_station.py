@@ -43,7 +43,10 @@ stations_ranked = (
     ).sort("distance_km")
 ).select("station_abbr", "station_name", "station_canton", "lon", "lat", "distance_km")
 
+# Adding numeric ranking
+stations_ranked = stations_ranked.with_columns(rank=pl.int_range(1, pl.len() + 1))
 
-nearest_station_from_postal_code = stations_ranked.head(1)
+# nearest_station_from_postal_code = stations_ranked.head(1)
+nearest_station_from_postal_code = stations_ranked.filter(pl.col("rank") == 1)
 
 print()
