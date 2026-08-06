@@ -1,12 +1,14 @@
 """Logic to collect and parse an ATOM feed from MeteoAlarm"""
 
 from datetime import datetime
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
+import numpy as np
 from feedparser import parse
 from feedparser.util import FeedParserDict
 
 from meteoswiss_retriever.constants import CURRENT_TZ, WEATHER_ALERT_ATOM_FEED_PREFIX
+from meteoswiss_retriever.utils.geo import parse_polygon
 from meteoswiss_retriever.utils.logs import get_logger
 
 logger = get_logger(__name__)
@@ -27,13 +29,13 @@ def query_alerts_feed(country: str = "switzerland") -> FeedParserDict:
 
 def parse_alerts_feed(
     feed: FeedParserDict | None = None,
-) -> List[Dict[str, str | datetime]]:
+) -> List[Dict[str, str | datetime | List[Tuple[np.float64, ...]]]]:
     """
     Function to parse a `feedparser` **FeedParserDict** object and return a list of clean alerts
     :param feed: FeedParserDict object
     :type feed: FeedParserDict
     :return: List of clean alerts
-    :rtype: List[Dict[str, str | datetime]]
+    :rtype: List[Dict[str, str | datetime | List[Tuple[np.float64, ...]]]]
     """
     if feed is None:
         logger.error("No feed found")
@@ -43,12 +45,14 @@ def parse_alerts_feed(
         logger.error("No feed entries found")
         return []
 
-    entries: List[Dict[str, str | datetime]] = []
+    entries: List[Dict[str, str | datetime | List[Tuple[np.float64, ...]]]] = []
 
     for entry in feed.entries:
         entries.append(
             {
-                "geo_polygon": entry["cap_polygon"],
+                "geo_polygon": parse_polygon(
+                    str_polygon=entry["cap_polygon"]
+                ),  # entry["cap_polygon"],
                 "geo_name": entry["cap_areadesc"],
                 "event": entry["cap_event"],
                 "certainty": entry["cap_certainty"],
