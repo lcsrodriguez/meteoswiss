@@ -4,10 +4,17 @@ from datetime import datetime
 from typing import Dict, List, Tuple
 
 import numpy as np
+import polars as pl
 from feedparser import parse
 from feedparser.util import FeedParserDict
+from shapely.geometry import Point, Polygon
 
 from meteoswiss_retriever.constants import CURRENT_TZ, WEATHER_ALERT_ATOM_FEED_PREFIX
+from meteoswiss_retriever.core.forecasts.metadata.points import (
+    clean_points,
+    get_point_by_postal_code,
+    query_geo_points,
+)
 from meteoswiss_retriever.utils.geo import parse_polygon
 from meteoswiss_retriever.utils.logs import get_logger
 
@@ -82,3 +89,46 @@ def parse_alerts_feed(
             }
         )
     return entries
+
+
+def get_alerts_by_postal_code(
+    alerts: List[Dict[str, str | datetime | List[Tuple[np.float64, ...]]]],
+    postal_code: int | None = None,
+) -> List[Dict]:
+    """
+    Function to get alerts for a given postal code
+    :param alerts: Dict of alert entries
+    :type alerts: List[Dict[str, str | datetime | List[Tuple[np.float64, ...]]]]
+    :param postal_code: Postal code
+    :type postal_code: int | None
+    :return: List of relevant alerts for this area
+    :rtype: List[Dict]
+    """
+    if postal_code is None:
+        logger.error("No postal code found")
+        return []
+
+    # Getting points representing a postal code
+    points = clean_points(query_geo_points()).filter(pl.col("point_type_id") == 2)
+
+    postal_code_details = get_point_by_postal_code(data=points, postal_code=postal_code)
+
+    # Getting geo details from given postal code
+    point_geo = postal_code_details.select("lon", "lat").to_dict(as_series=False)
+    point_lon, point_lat = (point_geo["lon"][0], point_geo["lat"][0])
+
+    p = Point(point_lon, point_lat)
+
+    relevant_alerts: List[Dict] = []
+    for i, alert in enumerate(alerts):
+        if alert["dt_expires"] < datetime.now().astimezone(tz=CURRENT_TZ):  # type: ignore[operator]
+            logger.warning(f"Alert #{i} expired. Skipping....")
+            continue
+
+        alert_poly: Polygon = Polygon(alert["geo_polygon"])
+
+        if alert_poly.covers(p):
+            logger.error(f"Alert #{i} contains this postal code")
+            relevant_alerts.append(alert)
+
+    return relevant_alerts
