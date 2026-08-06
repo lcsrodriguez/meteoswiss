@@ -1,6 +1,8 @@
 """Math logic to handle geo coordinates"""
 
 # import math
+from typing import List, Tuple
+
 import numpy as np
 import polars as pl
 
@@ -38,3 +40,21 @@ def computer_haversine_dist(
     c = 2 * a.sqrt().arcsin()
 
     return R * c
+
+
+def parse_polygon(str_polygon: str) -> List[Tuple[np.float64, ...]]:
+    """
+    Function to parse a string representing a polygon into a list of corresponding points
+    :param str_polygon: String representing a polygon
+    :type str_polygon: str
+    :return: List of points (tuple := (lon, lat))
+    :rtype: List[Tuple[np.float64, ...]]
+    """
+    return [
+        tuple(reversed(tuple(map(lambda s: np.float64(s), point.split(",")))))
+        for point in str_polygon.split(" ")
+    ]
+
+
+# Adding geo-fencing (check if a point is inside a polygon or not)
+# check formula and optimized ways

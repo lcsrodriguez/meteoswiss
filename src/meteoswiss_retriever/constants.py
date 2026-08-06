@@ -46,3 +46,8 @@ ENCODING_FORMAT: str = "latin-1"
 CSV_SEPARATOR: str = ";"
 
 LOG_DIR: Path = user_log_path(appname=APP_NAME, version=APP_VERSION)
+
+# https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-switzerland
+WEATHER_ALERT_ATOM_FEED_PREFIX: str = (
+    "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-"
+)

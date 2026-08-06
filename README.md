@@ -1,7 +1,6 @@
 # MeteoSwiss data retriever - `meteoswiss_retriever`
 
-Python data retriever from MeteoSwiss open-data APIs.
-
+Python weather data retriever from MeteoSwiss open-data: forecasts, ground measurements and weather alerts.
 
 ## Data
 
@@ -28,6 +27,18 @@ When selecting a postal code, users can have access to local forecasts at this p
 However, ground-measurements are only available on specific stations.
 To get both *realized* measurements + local forecasts for a given postal code,
 we can use **proxy measurements** by picking the ground measurements at the nearest station from our postal code coordinates.
+
+
+### Weather alerts
+
+We wanted to include weather alerts retrieval in this package. However, it does not seem to be available as an open data source directly by MeteoSwiss.
+
+However, MeteoSwiss distributes its weather alerts directly to **[MeteoAlarm.org](https://meteoalarm.org/en)** which provides APIs or ATOM feed like this one: https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-switzerland
+
+> [!WARNING]
+> Legacy RSS feeds (`https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-rss-<COUNTRY_NAME>`) are deprecated and must not be used! Only use ATOM feeds.
+
+Docs on ATOM format: https://en.wikipedia.org/wiki/Atom_(web_standard)
 
 ## License
 
