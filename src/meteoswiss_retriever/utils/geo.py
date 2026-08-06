@@ -51,7 +51,7 @@ def parse_polygon(str_polygon: str) -> List[Tuple[np.float64, ...]]:
     :rtype: List[Tuple[np.float64, ...]]
     """
     return [
-        tuple(map(lambda s: np.float64(s), point.split(",")))
+        tuple(reversed(tuple(map(lambda s: np.float64(s), point.split(",")))))
         for point in str_polygon.split(" ")
     ]
 
