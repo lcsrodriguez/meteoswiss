@@ -1,11 +1,12 @@
 """Logic to collect and parse an ATOM feed from MeteoAlarm"""
 
+from datetime import datetime
 from typing import Dict, List
 
 from feedparser import parse
 from feedparser.util import FeedParserDict
 
-from meteoswiss_retriever.constants import WEATHER_ALERT_ATOM_FEED_PREFIX
+from meteoswiss_retriever.constants import CURRENT_TZ, WEATHER_ALERT_ATOM_FEED_PREFIX
 from meteoswiss_retriever.utils.logs import get_logger
 
 logger = get_logger(__name__)
@@ -24,13 +25,15 @@ def query_alerts_feed(country: str = "switzerland") -> FeedParserDict:
     return feed
 
 
-def parse_alerts_feed(feed: FeedParserDict | None = None) -> List[Dict]:
+def parse_alerts_feed(
+    feed: FeedParserDict | None = None,
+) -> List[Dict[str, str | datetime]]:
     """
     Function to parse a `feedparser` **FeedParserDict** object and return a list of clean alerts
     :param feed: FeedParserDict object
     :type feed: FeedParserDict
     :return: List of clean alerts
-    :rtype: List[Dict]
+    :rtype: List[Dict[str, str | datetime]]
     """
     if feed is None:
         logger.error("No feed found")
@@ -40,7 +43,7 @@ def parse_alerts_feed(feed: FeedParserDict | None = None) -> List[Dict]:
         logger.error("No feed entries found")
         return []
 
-    entries: List[Dict] = []
+    entries: List[Dict[str, str | datetime]] = []
 
     for entry in feed.entries:
         entries.append(
@@ -54,12 +57,24 @@ def parse_alerts_feed(feed: FeedParserDict | None = None) -> List[Dict]:
                 "scope": entry["cap_scope"],
                 "message_type": entry["cap_message_type"],
                 "status": entry["cap_status"],
-                "dt_published": entry["published"],
-                "dt_updated": entry["updated"],
-                "dt_sent": entry["cap_sent"],
-                "dt_expires": entry["cap_expires"],
-                "dt_effective": entry["cap_effective"],
-                "dt_onset": entry["cap_onset"],
+                "dt_published": datetime.fromisoformat(entry["published"]).astimezone(
+                    tz=CURRENT_TZ
+                ),
+                "dt_updated": datetime.fromisoformat(entry["updated"]).astimezone(
+                    tz=CURRENT_TZ
+                ),
+                "dt_sent": datetime.fromisoformat(entry["cap_sent"]).astimezone(
+                    tz=CURRENT_TZ
+                ),
+                "dt_expires": datetime.fromisoformat(entry["cap_expires"]).astimezone(
+                    tz=CURRENT_TZ
+                ),
+                "dt_effective": datetime.fromisoformat(
+                    entry["cap_effective"]
+                ).astimezone(tz=CURRENT_TZ),
+                "dt_onset": datetime.fromisoformat(entry["cap_onset"]).astimezone(
+                    tz=CURRENT_TZ
+                ),
             }
         )
     return entries
