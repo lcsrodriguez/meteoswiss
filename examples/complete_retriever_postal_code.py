@@ -135,12 +135,10 @@ def postal_code_retriever(postal_code: int | None = None) -> Dict:
     # Extra step
     res["in"]["postal_code"] = postal_code
 
-    print()
-
     return res
 
 
 # TODO: Set up scheduler + service to download in background
 # + support for cron monitoring
 
-postal_code_retriever(postal_code=1012)
+postal_code_retriever(postal_code=6900)
