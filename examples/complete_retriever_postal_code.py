@@ -9,6 +9,11 @@ from typing import Dict
 
 import polars as pl
 
+from meteoswiss_retriever.core.alerts.collector import (
+    get_alerts_by_postal_code,
+    parse_alerts_feed,
+    query_alerts_feed,
+)
 from meteoswiss_retriever.core.forecasts.local_forecast import (
     collect_assets_data,
     get_forecast_data,
@@ -57,7 +62,7 @@ def postal_code_retriever(postal_code: int | None = None) -> Dict:
     # Check postal code
     # TODO: API for postal code (check data.admin.ch)
 
-    res: Dict = {"data": {}}
+    res: Dict = {"data": {}, "in": {}}
 
     # Get points
     points = clean_points(query_geo_points())
@@ -119,6 +124,17 @@ def postal_code_retriever(postal_code: int | None = None) -> Dict:
     res["data"]["measurements"] = measurements
 
     # Retrieving weather alerts
+    logger.info("Retrieving weather alerts...")
+
+    alerts = parse_alerts_feed(query_alerts_feed())
+
+    relevant_alerts = get_alerts_by_postal_code(alerts, postal_code=postal_code)
+
+    res["data"]["weather_alerts"] = relevant_alerts
+
+    # Extra step
+    res["in"]["postal_code"] = postal_code
+
     print()
 
     return res
