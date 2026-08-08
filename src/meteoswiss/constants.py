@@ -7,7 +7,7 @@ from typing import Dict, List, Tuple
 from platformdirs import user_log_path
 from pytz import timezone  # type: ignore[import-untyped]
 
-APP_NAME: str = "meteoswiss_retriever"
+APP_NAME: str = "meteoswiss"
 
 # Version dynamically updated via Makefile targets
 APP_VERSION: str = version(APP_NAME)

@@ -1,4 +1,4 @@
-# MeteoSwiss data retriever - `meteoswiss_retriever`
+# MeteoSwiss data retriever
 
 Python weather data retriever from MeteoSwiss open-data: forecasts, ground measurements and weather alerts.
 

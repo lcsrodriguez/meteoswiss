@@ -4,7 +4,7 @@ from datetime import date, datetime
 
 from pytz import UTC  # type: ignore[import-untyped]
 
-from meteoswiss_retriever.constants import CURRENT_TZ
+from meteoswiss.constants import CURRENT_TZ
 
 
 def get_datetime_from_str(str_datetime: str | None = None) -> datetime:

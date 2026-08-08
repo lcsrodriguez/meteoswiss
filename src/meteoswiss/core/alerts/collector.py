@@ -9,14 +9,14 @@ from feedparser import parse
 from feedparser.util import FeedParserDict
 from shapely.geometry import Point, Polygon
 
-from meteoswiss_retriever.constants import CURRENT_TZ, WEATHER_ALERT_ATOM_FEED_PREFIX
-from meteoswiss_retriever.core.forecasts.metadata.points import (
+from meteoswiss.constants import CURRENT_TZ, WEATHER_ALERT_ATOM_FEED_PREFIX
+from meteoswiss.core.forecasts.metadata.points import (
     clean_points,
     get_point_by_postal_code,
     query_geo_points,
 )
-from meteoswiss_retriever.utils.geo import parse_polygon
-from meteoswiss_retriever.utils.logs import get_logger
+from meteoswiss.utils.geo import parse_polygon
+from meteoswiss.utils.logs import get_logger
 
 logger = get_logger(__name__)
 

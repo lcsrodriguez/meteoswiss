@@ -6,16 +6,16 @@ from typing import Any, Dict
 import httpx
 import polars as pl
 
-from meteoswiss_retriever.constants import (
+from meteoswiss.constants import (
     BASE_URL,
     ENCODING_FORMAT,
     GROUND_MEASUREMENTS_COLLECTION_ID,
 )
-from meteoswiss_retriever.utils.date import (
+from meteoswiss.utils.date import (
     get_datetime_from_iso_str,
 )
-from meteoswiss_retriever.utils.export import save_df
-from meteoswiss_retriever.utils.logs import get_logger
+from meteoswiss.utils.export import save_df
+from meteoswiss.utils.logs import get_logger
 
 logger = get_logger(__name__)
 

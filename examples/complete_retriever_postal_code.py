@@ -1,7 +1,7 @@
 """Sample script to retrieve all available data (forecasts/measurements/weather alerts) for a given input postal code"""
 # ruff: noqa: E402
 
-from meteoswiss_retriever.utils.logs import setup_logger
+from meteoswiss.utils.logs import setup_logger
 
 setup_logger()
 
@@ -9,44 +9,44 @@ from typing import Dict
 
 import polars as pl
 
-from meteoswiss_retriever.core.alerts.collector import (
+from meteoswiss.core.alerts.collector import (
     get_alerts_by_postal_code,
     parse_alerts_feed,
     query_alerts_feed,
 )
-from meteoswiss_retriever.core.forecasts.local_forecast import (
+from meteoswiss.core.forecasts.local_forecast import (
     collect_assets_data,
     get_forecast_data,
     query_local_forecast_asset_links,
 )
-from meteoswiss_retriever.core.forecasts.metadata.parameters import (
+from meteoswiss.core.forecasts.metadata.parameters import (
     clean_parameters,
     query_parameters,
 )
-from meteoswiss_retriever.core.forecasts.metadata.points import (
+from meteoswiss.core.forecasts.metadata.points import (
     Location,
     clean_points,
     from_series_to_location_obj,
     get_point_by_postal_code,
     query_geo_points,
 )
-from meteoswiss_retriever.core.measurements.ground_measurements import (
+from meteoswiss.core.measurements.ground_measurements import (
     collect_assets_data as collect_measurements_data,
 )
-from meteoswiss_retriever.core.measurements.ground_measurements import (
+from meteoswiss.core.measurements.ground_measurements import (
     query_measurements_asset_links,
 )
-from meteoswiss_retriever.core.measurements.metadata.stations import (
+from meteoswiss.core.measurements.metadata.stations import (
     clean_stations,
     query_stations,
 )
-from meteoswiss_retriever.core.misc.postal_codes import (
+from meteoswiss.core.misc.postal_codes import (
     check_postal_code,
     get_postal_code_details,
     get_postal_codes,
 )
-from meteoswiss_retriever.utils.geo import computer_haversine_dist
-from meteoswiss_retriever.utils.logs import get_logger
+from meteoswiss.utils.geo import computer_haversine_dist
+from meteoswiss.utils.logs import get_logger
 
 logger = get_logger(__name__)
 

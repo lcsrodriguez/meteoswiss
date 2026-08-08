@@ -6,13 +6,13 @@ from typing import NamedTuple
 import httpx
 import polars as pl
 
-from meteoswiss_retriever.constants import (
+from meteoswiss.constants import (
     BASE_URL,
     ENCODING_FORMAT,
     LOCAL_FORECAST_COLLECTION_ID,
     REMOVED_LANGUAGES,
 )
-from meteoswiss_retriever.utils.logs import get_logger
+from meteoswiss.utils.logs import get_logger
 
 logger = get_logger(__name__)
 

@@ -5,8 +5,8 @@ from typing import Dict, List
 
 import polars as pl
 
-from meteoswiss_retriever.constants import CSV_SEPARATOR, POSTAL_CODES_CSV
-from meteoswiss_retriever.utils.logs import get_logger
+from meteoswiss.constants import CSV_SEPARATOR, POSTAL_CODES_CSV
+from meteoswiss.utils.logs import get_logger
 
 logger = get_logger(__name__)
 

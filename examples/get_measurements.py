@@ -1,24 +1,24 @@
 """Sample script to retrieve + save metadata on ground measurements"""
 # ruff: noqa: E402
 
-from meteoswiss_retriever.utils.logs import get_logger, setup_logger
+from meteoswiss.utils.logs import get_logger, setup_logger
 
 setup_logger()
 
-from meteoswiss_retriever.core.measurements.ground_measurements import (
+from meteoswiss.core.measurements.ground_measurements import (
     collect_assets_data,
     query_available_items,
     query_measurements_asset_links,
 )
-from meteoswiss_retriever.core.measurements.metadata.parameters import (
+from meteoswiss.core.measurements.metadata.parameters import (
     clean_parameters,
     query_parameters,
 )
-from meteoswiss_retriever.core.measurements.metadata.stations import (
+from meteoswiss.core.measurements.metadata.stations import (
     clean_stations,
     query_stations,
 )
-from meteoswiss_retriever.utils.export import save_df
+from meteoswiss.utils.export import save_df
 
 logger = get_logger(__name__)
 

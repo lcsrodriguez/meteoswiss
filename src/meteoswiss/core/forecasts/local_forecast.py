@@ -7,24 +7,24 @@ from typing import Any, Dict, List
 import httpx
 import polars as pl
 
-from meteoswiss_retriever.constants import (
+from meteoswiss.constants import (
     BASE_URL,
     CURRENT_TZ,
     ENCODING_FORMAT,
     LOCAL_FORECAST_COLLECTION_ID,
 )
-from meteoswiss_retriever.core.forecasts.metadata.parameters import get_parameters_freq
-from meteoswiss_retriever.core.forecasts.metadata.points import (
+from meteoswiss.core.forecasts.metadata.parameters import get_parameters_freq
+from meteoswiss.core.forecasts.metadata.points import (
     Location,
     get_unique_point,
 )
-from meteoswiss_retriever.utils.date import (
+from meteoswiss.utils.date import (
     get_date_from_str,
     get_datetime_from_iso_str,
     get_datetime_from_str,
 )
-from meteoswiss_retriever.utils.export import save_df
-from meteoswiss_retriever.utils.logs import get_logger
+from meteoswiss.utils.export import save_df
+from meteoswiss.utils.logs import get_logger
 
 logger = get_logger(__name__)
 

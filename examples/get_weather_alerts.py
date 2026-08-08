@@ -1,16 +1,16 @@
 """Sample script to get weather alerts"""
 # ruff: noqa: E402
 
-from meteoswiss_retriever.utils.logs import setup_logger
+from meteoswiss.utils.logs import setup_logger
 
 setup_logger()
 
-from meteoswiss_retriever.core.alerts.collector import (
+from meteoswiss.core.alerts.collector import (
     get_alerts_by_postal_code,
     parse_alerts_feed,
     query_alerts_feed,
 )
-from meteoswiss_retriever.utils.logs import get_logger
+from meteoswiss.utils.logs import get_logger
 
 logger = get_logger(__name__)
 

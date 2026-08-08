@@ -6,7 +6,7 @@ import logging.handlers
 from datetime import datetime
 from pathlib import Path
 
-from meteoswiss_retriever.constants import LOG_DIR
+from meteoswiss.constants import LOG_DIR
 
 # Log record format (with millisecond precision)
 LOG_RECORD_MS_PRECISION_FMT: str = (
@@ -126,7 +126,7 @@ def get_time_rotating_file_handler() -> logging.Handler:
 
 def setup_logger() -> None:
     """
-    Function to set up a valid root (meteoswiss_retriever) logger
+    Function to set up a valid root (meteoswiss) logger
     This function **must** only be called on project's entry points
     It also disables external packages logging
     :return: Nothing
@@ -135,8 +135,8 @@ def setup_logger() -> None:
     configure_external_logging()
     # print("Setup logger")
 
-    # Root logger (meteoswiss_retriever)
-    root_logger = logging.getLogger("meteoswiss_retriever")
+    # Root logger (meteoswiss)
+    root_logger = logging.getLogger("meteoswiss")
     root_logger.setLevel(logging.DEBUG)  # Setting up DEBUG level to capture all logs
     root_logger.propagate = False
 
@@ -158,10 +158,10 @@ def get_logger(name: str) -> logging.Logger:
     :rtype: logging.Logger
     """
     if not name or name == "__main__":
-        return logging.getLogger("meteoswiss_retriever")
+        return logging.getLogger("meteoswiss")
 
-    if not name.startswith("meteoswiss_retriever"):
-        name = f"meteoswiss_retriever.{name}"
+    if not name.startswith("meteoswiss"):
+        name = f"meteoswiss.{name}"
     # print(name)
     return logging.getLogger(name)
 
