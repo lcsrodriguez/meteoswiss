@@ -13,6 +13,30 @@ dependencies = [
     "shapely>=2.1.2",
 ]
 
+readme = "README.md"
+license-files = ["LICEN[CS]E*"]
+
+authors = [
+    {name = "Lucas RODRIGUEZ"}
+]
+maintainers = [
+    {name = "Lucas RODRIGUEZ"}
+]
+
+# PyPi classifiers
+classifiers = [
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+
+keywords = ["weather", "weather-data", "weather-api", "forecasts", "measurements", "weather-alerts"]
+
+
 [dependency-groups]
 dev = [
     "pre-commit>=4.6.1",
@@ -26,3 +50,17 @@ ignore_missing_imports = true
 [tool.uv]
 package = true
 exclude-newer = "2 days"  # https://docs.astral.sh/uv/reference/settings/#exclude-newer
+
+
+[project.urls]
+Homepage = "https://github.com/lcsrodriguez/meteoswiss-retriever"
+Repository = "https://github.com/lcsrodriguez/meteoswiss-retriever"
+"Bug Tracker" = "https://github.com/lcsrodriguez/meteoswiss-retriever/issues"
+
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/meteoswiss_retriever"]
