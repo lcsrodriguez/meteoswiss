@@ -40,6 +40,11 @@ from meteoswiss_retriever.core.measurements.metadata.stations import (
     clean_stations,
     query_stations,
 )
+from meteoswiss_retriever.core.misc.postal_codes import (
+    check_postal_code,
+    get_postal_code_details,
+    get_postal_codes,
+)
 from meteoswiss_retriever.utils.geo import computer_haversine_dist
 from meteoswiss_retriever.utils.logs import get_logger
 
@@ -60,7 +65,15 @@ def postal_code_retriever(postal_code: int | None = None) -> Dict:
         return {}
 
     # Check postal code
-    # TODO: API for postal code (check data.admin.ch)
+    postal_codes = get_postal_codes()
+
+    if not check_postal_code(codes=postal_codes, postal_code=postal_code):
+        logger.error("Invalid postal code")
+        return {}
+
+    # Getting postal code details
+    pc_details = get_postal_code_details(codes=postal_codes, postal_code=postal_code)
+    logger.info(f"Details: {pc_details}")
 
     res: Dict = {"data": {}, "in": {}}
 
