@@ -1,7 +1,7 @@
 POSTAL_CODES_CSV_ZIP := https://data.geo.admin.ch/ch.swisstopo-vd.ortschaftenverzeichnis_plz/ortschaftenverzeichnis_plz/ortschaftenverzeichnis_plz_2056.csv.zip
 POSTAL_CODES_TEMP_ZIP := data/temp.zip
 
-.PHONY: clean clean-forecasts-dl clean-measurements-dl version up-major up-minor up-patch print-version dl-postal-codes
+.PHONY: clean clean-forecasts-dl clean-measurements-dl version up-major up-minor up-patch print-version dl-postal-codes clean-postal-codes
 
 clean-forecasts-dl:
 	@echo "Cleaning forecasts dl"
@@ -11,7 +11,7 @@ clean-measurements-dl:
 	@echo "Cleaning forecasts dl"
 	@rm -rf data/measurements/dl/*.csv
 
-clean: clean-forecasts-dl clean-measurements-dl
+clean: clean-forecasts-dl clean-measurements-dl clean-postal-codes
 
 
 version:
@@ -44,3 +44,7 @@ dl-postal-codes:
 	@mv data/AMTOVZ_CSV_LV95/AMTOVZ_CSV_LV95.csv data/postal_codes.csv
 	@rmdir data/AMTOVZ_CSV_LV95
 	@rm $(POSTAL_CODES_TEMP_ZIP)
+
+clean-postal-codes:
+	@echo "Cleaning postal codes"
+	@rm -rf data/postal_codes.csv
