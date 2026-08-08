@@ -51,3 +51,5 @@ LOG_DIR: Path = user_log_path(appname=APP_NAME, version=APP_VERSION)
 WEATHER_ALERT_ATOM_FEED_PREFIX: str = (
     "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-"
 )
+
+POSTAL_CODES_CSV: Path = Path("data/postal_codes.csv")

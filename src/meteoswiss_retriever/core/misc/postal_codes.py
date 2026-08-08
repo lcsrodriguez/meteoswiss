@@ -1,6 +1,7 @@
 """Sub-module to retrieve postal codes"""
 
 from pathlib import Path
+from typing import Dict, List
 
 import polars as pl
 
@@ -38,3 +39,38 @@ def get_postal_codes(filename: str | Path | None = POSTAL_CODES_CSV) -> pl.DataF
             "Kantonskürzel": "canton",
         }
     )
+
+
+def check_postal_code(codes: pl.DataFrame, postal_code: int | None = None) -> bool:
+    """
+    Function to check if an input postal code is valid (Switzerland)
+    :param codes: DataFrame with postal codes details
+    :type codes: pl.DataFrame
+    :param postal_code: Input postal code
+    :type postal_code: int | None
+    :return: True if postal code is valid, False otherwise
+    :rtype: bool
+    """
+    if postal_code is None:
+        return False
+
+    if codes.filter(pl.col("postal_code") == postal_code).is_empty():
+        return False
+    return True
+
+
+def get_postal_code_details(
+    codes: pl.DataFrame, postal_code: int | None = None
+) -> Dict[str, List[str | int] | str | int]:
+    """
+    Function to get details of postal code (city name, canton)
+    :param codes: DataFrame with postal codes details
+    :type codes: pl.DataFrame
+    :param postal_code: Input postal code
+    :type postal_code: int | None
+    :return: Dict with details of postal code
+    :rtype: Dict[str, List[str | int] | str | int]
+    """
+    if postal_code is None:
+        return {}
+    return codes.filter(pl.col("postal_code") == postal_code).to_dict(as_series=False)
