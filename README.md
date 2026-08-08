@@ -2,6 +2,10 @@
 
 Python weather data retriever from MeteoSwiss open-data: forecasts, ground measurements and weather alerts.
 
+## Getting started
+
+See sample scripts in **[`examples/`](examples/)** folder.
+
 ## Data
 
 > [!NOTE]
