@@ -1,0 +1,49 @@
+# docs:
+#   - https://docs.pypi.org/trusted-publishers/creating-a-project-through-oidc/
+#   - https://docs.pypi.org/trusted-publishers/using-a-publisher/
+
+name: Publish
+
+on:
+  release: # Published releases
+    types: [ published ]
+  #push:
+  #  tags:
+  #    # Publish on any tag starting with a `v`, e.g., v1.2.3
+  #    - v*
+
+jobs:
+  pypi:
+    name: Publish to PyPI
+    runs-on: ubuntu-latest
+
+    # Environment and permissions trusted publishing.
+    environment:
+      name: pypi
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          persist-credentials: false
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b
+
+      - name: Install Python 3.13
+        run: uv python install 3.13
+
+      - name: Build package
+        run: uv build
+
+      # Check that basic features work and we didn't miss to include crucial files
+      #- name: Smoke test (wheel)
+      #  run: uv run --isolated --no-project --with dist/*.whl tests/smoke_test.py
+      #- name: Smoke test (source distribution)
+      #  run: uv run --isolated --no-project --with dist/*.tar.gz tests/smoke_test.py
+      - name: Publish
+        run: uv publish
