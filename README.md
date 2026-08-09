@@ -4,7 +4,13 @@ Python weather data retriever from MeteoSwiss open-data: forecasts, ground measu
 
 ## Getting started
 
+Install package:
+```shell
+uv add meteoswiss # or pip install meteoswiss
+```
+
 See sample scripts in **[`examples/`](examples/)** folder.
+
 
 ## Data
 
